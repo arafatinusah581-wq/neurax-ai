@@ -6,44 +6,94 @@
     body {
       margin: 0;
       font-family: Arial;
-      background: radial-gradient(circle, #0f172a, #000);
+      background: #0f172a;
       color: white;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    #chatBox {
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      padding: 10px;
+      border-radius: 10px;
+      background: #111827;
+    }
+
+    .inputBox {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      margin-top: 10px;
     }
 
-    .box {
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 40px;
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 10px;
+      margin-left: 5px;
       border: none;
+      border-radius: 8px;
       background: #3b82f6;
       color: white;
-      border-radius: 10px;
-      margin-top: 20px;
+    }
+
+    .msg {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .user {
+      background: #1e293b;
+    }
+
+    .ai {
+      background: #334155;
     }
   </style>
 </head>
 
 <body>
-  <div class="box">
-    <h1>NeuraX AI 🚀</h1>
-    <p>Your AI system is running</p>
-    <input id="msg" placeholder="Type message..." />
-<button onclick="sendMessage()">Send</button>
-<p id="response"></p>
+
+<div class="container">
+  <h2>NeuraX AI Chat 🚀</h2>
+
+  <div id="chatBox"></div>
+
+  <div class="inputBox">
+    <input id="input" placeholder="Type message..." />
+    <button onclick="sendMessage()">Send</button>
   </div>
+</div>
+
 <script>
+const chatBox = document.getElementById("chatBox");
+
+function addMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  div.innerText = role + ": " + text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 async function sendMessage() {
-  const message = document.getElementById("msg").value;
+  const input = document.getElementById("input");
+  const message = input.value;
+
+  if (!message) return;
+
+  addMessage("user", message);
+  input.value = "";
 
   const res = await fetch("http://localhost:5000/chat", {
     method: "POST",
@@ -55,8 +105,9 @@ async function sendMessage() {
 
   const data = await res.json();
 
-  document.getElementById("response").innerText = data.reply;
+  addMessage("ai", data.reply);
 }
 </script>
+
 </body>
 </html>
