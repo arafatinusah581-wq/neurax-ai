@@ -1,4 +1,21 @@
-<!DOCTYPE html>
+function typeMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  chatBox.appendChild(div);
+
+  let i = 0;
+  div.innerText = role + ": ";
+
+  const interval = setInterval(() => {
+    if (i < text.length) {
+      div.innerText += text[i];
+      i++;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    } else {
+      clearInterval(interval);
+    }
+  }, 15); // typing speed
+}<!DOCTYPE html>
 <html>
 <head>
   <title>NeuraX AI</title>
