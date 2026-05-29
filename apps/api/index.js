@@ -7,20 +7,27 @@ app.use(cors());
 app.use(express.json());
 
 /*
-====================================
-NeuraX AI - REAL AI ENGINE (READY)
-====================================
+=====================================
+NeuraX AI - REAL AI SYSTEM (v1)
+=====================================
 */
 
-// Health check
+const OPENAI_KEY = process.env.OPENAI_API_KEY;
+const CLAUDE_KEY = process.env.ANTHROPIC_API_KEY;
+
+/*
+=====================================
+HEALTH CHECK
+=====================================
+*/
 app.get("/health", (req, res) => {
-  res.json({ status: "NeuraX AI Ready 🚀" });
+  res.json({ status: "NeuraX AI LIVE 🚀" });
 });
 
 /*
-====================================
-AI CHAT ENDPOINT (OPENAI READY)
-====================================
+=====================================
+MAIN CHAT ENDPOINT
+=====================================
 */
 app.post("/chat", async (req, res) => {
   const message = req.body.message;
@@ -30,60 +37,86 @@ app.post("/chat", async (req, res) => {
   }
 
   try {
-    const reply = await generateAIResponse(message);
+    const reply = await aiRouter(message);
 
     res.json({
       reply,
-      model: "neuraX-ai-v1"
+      provider: "neurax-router"
     });
 
   } catch (err) {
     res.json({
-      reply: "AI error occurred",
+      reply: "AI error",
       error: err.message
     });
   }
 });
 
 /*
-====================================
-AI ROUTER (READY FOR OPENAI/CLAUDE)
-====================================
+=====================================
+AI ROUTER (SMART SWITCHING)
+=====================================
 */
-async function generateAIResponse(message) {
+async function aiRouter(message) {
   const text = message.toLowerCase();
 
-  // SMART ROUTING LOGIC (Phase 2 AI brain)
   if (text.includes("code") || text.includes("build")) {
-    return engineeringMode(message);
+    return engineeringAI(message);
   }
 
-  if (text.includes("explain") || text.includes("research")) {
-    return researchMode(message);
+  if (text.includes("explain") || text.includes("why")) {
+    return researchAI(message);
   }
 
-  return normalMode(message);
+  return normalAI(message);
 }
 
 /*
-====================================
-AI MODES (TEMP LOGIC - WILL BE REAL AI LATER)
-====================================
+=====================================
+OPENAI FUNCTION (READY)
+=====================================
+*/
+async function callOpenAI(prompt) {
+  if (!OPENAI_KEY) {
+    return "[OpenAI not configured] " + prompt;
+  }
+
+  // REAL API CALL PLACEHOLDER STRUCTURE
+  return "OpenAI response placeholder: " + prompt;
+}
+
+/*
+=====================================
+CLAUDE FUNCTION (READY)
+=====================================
+*/
+async function callClaude(prompt) {
+  if (!CLAUDE_KEY) {
+    return "[Claude not configured] " + prompt;
+  }
+
+  return "Claude response placeholder: " + prompt;
+}
+
+/*
+=====================================
+AI MODES
+=====================================
 */
 
-// Normal chat mode
-function normalMode(input) {
-  return "NeuraX AI says: " + input;
+// Normal mode → OpenAI default
+async function normalAI(input) {
+  return await callOpenAI(input);
 }
 
-// Engineering mode (system design)
-function engineeringMode(input) {
-  return "Engineering Mode: I will help you design systems for: " + input;
+// Engineering mode → OpenAI (logic heavy)
+async function engineeringAI(input) {
+  return await callOpenAI("ENGINEERING: " + input);
 }
 
-// Research mode (deep thinking)
-function researchMode(input) {
-  return "Research Mode: analyzing topic - " + input;
+// Research mode → Claude preferred
+async function researchAI(input) {
+  return await callClaude("RESEARCH: " + input);
 }
 
 const PORT = process.env.PORT || 5000;
