@@ -37,7 +37,26 @@
   <div class="box">
     <h1>NeuraX AI 🚀</h1>
     <p>Your AI system is running</p>
-    <button>Start Chat</button>
+    <input id="msg" placeholder="Type message..." />
+<button onclick="sendMessage()">Send</button>
+<p id="response"></p>
   </div>
+<script>
+async function sendMessage() {
+  const message = document.getElementById("msg").value;
+
+  const res = await fetch("http://localhost:5000/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("response").innerText = data.reply;
+}
+</script>
 </body>
 </html>
